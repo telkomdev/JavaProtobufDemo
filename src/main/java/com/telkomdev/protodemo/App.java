@@ -29,9 +29,12 @@ public class App {
                 .addImages("nokia.com/img2")
                 .build();
 
+        // serialize product java to protobuf
         byte[] out = productOut.toByteArray();
 
         try {
+
+            // deserialize protobuf to product java
             ProductProtos.Product productIn = ProductProtos.Product.parseFrom(out);
 
             System.out.println(productIn.getID());
