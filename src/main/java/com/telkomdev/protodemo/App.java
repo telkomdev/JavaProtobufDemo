@@ -1,5 +1,7 @@
 package com.telkomdev.protodemo;
 
+import com.google.protobuf.InvalidProtocolBufferException;
+
 /*
  * Copyright 2019 wuriyanto.com
  *
@@ -19,6 +21,29 @@ public class App {
 
     public static void main(String[] args) {
 
-        System.out.println("Hello World!");
+        ProductProtos.Product productOut = ProductProtos.Product.newBuilder()
+                .setID("1")
+                .setName("Nokia 6")
+                .setQuantity(5)
+                .addImages("nokia.com/img1")
+                .addImages("nokia.com/img2")
+                .build();
+
+        byte[] out = productOut.toByteArray();
+
+        try {
+            ProductProtos.Product productIn = ProductProtos.Product.parseFrom(out);
+
+            System.out.println(productIn.getID());
+            System.out.println(productIn.getName());
+            System.out.println(productIn.getQuantity());
+
+            System.out.println("Product images:");
+            for (String image : productIn.getImagesList()) {
+                System.out.println(image);
+            }
+        } catch (InvalidProtocolBufferException e) {
+            System.out.print("error read proto message " + e.getMessage());
+        }
     }
 }
