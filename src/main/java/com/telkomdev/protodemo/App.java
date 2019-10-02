@@ -2,6 +2,9 @@ package com.telkomdev.protodemo;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /*
  * Copyright 2019 wuriyanto.com
  *
@@ -21,32 +24,34 @@ public class App {
 
     public static void main(String[] args) {
 
-        ProductProtos.Product productOut = ProductProtos.Product.newBuilder()
-                .setID("1")
-                .setName("Nokia 6")
-                .setQuantity(5)
-                .addImages("nokia.com/img1")
-                .addImages("nokia.com/img2")
-                .build();
+        Product p = new Product();
+        p.setId("001");
+        p.setName("Nokia 6");
+        p.setQuantity(5);
 
-        // serialize product java to protobuf
-        byte[] out = productOut.toByteArray();
+        List<String> images = new ArrayList<String>();
+        images.add("wuriyanto.com/img1");
+        images.add("wuriyanto.com/img2");
+        p.setImages(images);
 
+
+        // serialize to protocol buffer
+        byte[] protoByte = p.toProto().toByteArray();
+
+        System.out.println(new String(protoByte));
+
+        // deserialize from protocol buffer to java object
         try {
+            Product product = Product.fromProto(protoByte);
+            System.out.println(product.getId());
+            System.out.println(product.getName());
+            System.out.println(product.getQuantity());
 
-            // deserialize protobuf to product java
-            ProductProtos.Product productIn = ProductProtos.Product.parseFrom(out);
-
-            System.out.println(productIn.getID());
-            System.out.println(productIn.getName());
-            System.out.println(productIn.getQuantity());
-
-            System.out.println("Product images:");
-            for (String image : productIn.getImagesList()) {
+            for(String image : product.getImages()) {
                 System.out.println(image);
             }
         } catch (InvalidProtocolBufferException e) {
-            System.out.print("error read proto message " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }
